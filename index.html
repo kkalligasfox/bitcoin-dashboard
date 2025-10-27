@@ -1184,12 +1184,28 @@
                     case '1w': days = 1825; break; // 5 years
                 }
 
+                // Add delay to avoid rate limiting (wait 2 seconds)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
                 // Fetch Bitcoin market cap history
                 const btcResponse = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}&interval=daily`);
+
+                if (!btcResponse.ok) {
+                    throw new Error(`Failed to fetch Bitcoin history: ${btcResponse.status}`);
+                }
+
                 const btcData = await btcResponse.json();
+
+                // Add another delay before next API call (wait 2 seconds)
+                await new Promise(resolve => setTimeout(resolve, 2000));
 
                 // Fetch Ethereum market cap (to help estimate total market better)
                 const ethResponse = await fetch(`https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=${days}&interval=daily`);
+
+                if (!ethResponse.ok) {
+                    throw new Error(`Failed to fetch Ethereum history: ${ethResponse.status}`);
+                }
+
                 const ethData = await ethResponse.json();
 
                 // Calculate dominance based on BTC/(BTC+ETH+Others estimation)
