@@ -325,6 +325,81 @@
         .tooltip strong {
             color: #ffd700;
         }
+
+        .risk-warning {
+            background: rgba(255, 165, 0, 0.15);
+            border: 2px solid rgba(255, 165, 0, 0.4);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 0 0 30px 0;
+            text-align: center;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .risk-warning strong {
+            color: #ffa500;
+            font-size: 1.1em;
+        }
+
+        .quick-start-guide {
+            background: rgba(100, 200, 255, 0.15);
+            border: 2px solid rgba(100, 200, 255, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 0 0 30px 0;
+        }
+
+        .guide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .guide-header:hover {
+            opacity: 0.8;
+        }
+
+        .guide-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #64c8ff;
+        }
+
+        .guide-toggle {
+            font-size: 1.5em;
+            color: #64c8ff;
+            transition: transform 0.3s ease;
+        }
+
+        .guide-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .guide-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .guide-content.expanded {
+            max-height: 800px;
+            margin-top: 15px;
+        }
+
+        .guide-step {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #64c8ff;
+        }
+
+        .guide-step strong {
+            color: #64c8ff;
+        }
     </style>
 </head>
 <body>
@@ -334,6 +409,44 @@
             <div class="btc-price" id="btcPrice">Loading Bitcoin price...</div>
             <div class="last-updated" id="lastUpdated">Last updated: --</div>
         </header>
+
+        <!-- Risk Warning Banner -->
+        <div class="risk-warning">
+            ⚠️ <strong>Educational Content Only</strong> - This dashboard is for informational purposes and does not constitute financial advice. Always do your own research and consult with a qualified financial advisor before making investment decisions.
+        </div>
+
+        <!-- Quick Start Guide -->
+        <div class="quick-start-guide">
+            <div class="guide-header" onclick="toggleGuide()">
+                <div class="guide-title">📚 New to Bitcoin Trading? Start Here!</div>
+                <div class="guide-toggle" id="guideToggle">▼</div>
+            </div>
+            <div class="guide-content" id="guideContent">
+                <div class="guide-step">
+                    <strong>Step 1: Check the Market Summary</strong><br>
+                    Scroll down to see the "Market Analysis Summary" which combines all indicators into one simple recommendation (Buy, Sell, or Neutral). This is your quick snapshot of the market.
+                </div>
+                <div class="guide-step">
+                    <strong>Step 2: Look at the Signal Icons</strong><br>
+                    Each indicator shows a colored circle: 🟢 Green = Buy signal, 🔴 Red = Sell signal, 🟡 Yellow = Neutral. The more green you see, the more bullish the market looks.
+                </div>
+                <div class="guide-step">
+                    <strong>Step 3: Understand the Four Indicators</strong><br>
+                    • <strong>Price Strength Meter (RSI):</strong> Shows if Bitcoin is oversold (cheap) or overbought (expensive)<br>
+                    • <strong>Trend Direction (MACD):</strong> Shows if the price trend is going up or down<br>
+                    • <strong>Bitcoin Market Share:</strong> Shows if Bitcoin is stronger or weaker vs other coins<br>
+                    • <strong>Trading Activity:</strong> Shows how much trading is happening (high activity can signal big moves coming)
+                </div>
+                <div class="guide-step">
+                    <strong>Step 4: Use Multiple Timeframes</strong><br>
+                    Click the 1H, 1D, or 1W buttons on each chart to see short-term (1 hour), medium-term (1 day), or long-term (1 week) trends. Best practice: Check all three to get the full picture!
+                </div>
+                <div class="guide-step">
+                    <strong>Step 5: Never Rely on One Indicator</strong><br>
+                    Always look at ALL indicators together. If they all agree (all green or all red), that's a stronger signal. If they're mixed, be cautious and wait for clearer signs.
+                </div>
+            </div>
+        </div>
 
         <!-- Market Summary -->
         <div class="market-summary">
@@ -365,7 +478,7 @@
             <!-- RSI Indicator -->
             <div class="indicator-card">
                 <div class="indicator-header">
-                    <div class="indicator-title">📊 Relative Strength Index (RSI)</div>
+                    <div class="indicator-title">📊 Price Strength Meter</div>
                     <div class="indicator-value" id="rsiValue">--</div>
                 </div>
                 <div class="chart-timeframe-selector">
@@ -392,7 +505,7 @@
             <!-- MACD Indicator -->
             <div class="indicator-card">
                 <div class="indicator-header">
-                    <div class="indicator-title">📈 MACD (Moving Average Convergence Divergence)</div>
+                    <div class="indicator-title">📈 Trend Direction</div>
                     <div class="indicator-value" id="macdValue">--</div>
                 </div>
                 <div class="chart-timeframe-selector">
@@ -427,7 +540,7 @@
             <!-- Bitcoin Dominance -->
             <div class="indicator-card">
                 <div class="indicator-header">
-                    <div class="indicator-title">👑 Bitcoin Dominance</div>
+                    <div class="indicator-title">👑 Bitcoin Market Share</div>
                     <div class="indicator-value" id="dominanceValue">--</div>
                 </div>
                 <div class="chart-timeframe-selector">
@@ -454,7 +567,7 @@
             <!-- Open Interest -->
             <div class="indicator-card">
                 <div class="indicator-header">
-                    <div class="indicator-title">⚡ Open Interest (Futures Contracts)</div>
+                    <div class="indicator-title">⚡ Trading Activity</div>
                     <div class="indicator-value" id="oiValue">--</div>
                 </div>
                 <div class="chart-timeframe-selector">
@@ -521,7 +634,9 @@
         function getSignalBadge(signal) {
             const signalClass = signal === 'BUY' ? 'signal-buy' :
                               signal === 'SELL' ? 'signal-sell' : 'signal-neutral';
-            return `<span class="signal-badge ${signalClass}">${signal}</span>`;
+            const icon = signal === 'BUY' ? '🟢' :
+                        signal === 'SELL' ? '🔴' : '🟡';
+            return `<span class="signal-badge ${signalClass}">${icon} ${signal}</span>`;
         }
 
         // Helper function to explain reasons in simple language
@@ -1020,7 +1135,25 @@
             try {
                 // Get current dominance from CoinGecko
                 const currentResponse = await fetch('https://api.coingecko.com/api/v3/global');
+
+                // Check if request was successful
+                if (!currentResponse.ok) {
+                    if (currentResponse.status === 429) {
+                        throw new Error('Rate limit exceeded. Dominance will retry in 30 minutes.');
+                    } else if (currentResponse.status === 503) {
+                        throw new Error('CoinGecko service temporarily unavailable.');
+                    } else {
+                        throw new Error(`API error: ${currentResponse.status}`);
+                    }
+                }
+
                 const currentData = await currentResponse.json();
+
+                // Validate data structure
+                if (!currentData.data || !currentData.data.market_cap_percentage || !currentData.data.market_cap_percentage.btc) {
+                    throw new Error('Invalid data received from API');
+                }
+
                 const currentDominance = currentData.data.market_cap_percentage.btc;
                 const currentTotalMarketCap = currentData.data.total_market_cap.usd;
 
@@ -1164,6 +1297,7 @@
             } catch (error) {
                 console.error('Error fetching dominance:', error);
                 document.getElementById('dominanceValue').innerHTML = '<span class="error">Error</span>';
+                document.getElementById('dominanceSignal').innerHTML = `<div class="error">${error.message}</div>`;
             }
         }
 
@@ -1305,6 +1439,7 @@
 
         // Initialize dashboard
         let refreshInterval;
+        let dominanceInterval;
 
         async function initDashboard() {
             await fetchBitcoinData();
@@ -1316,17 +1451,31 @@
         }
 
         function setupAutoRefresh() {
-            // Clear existing interval
+            // Clear existing intervals
             if (refreshInterval) clearInterval(refreshInterval);
+            if (dominanceInterval) clearInterval(dominanceInterval);
 
-            // Use 5 minutes as default refresh interval
-            const intervalTime = 5 * 60 * 1000; // 5 minutes
-
+            // Fast refresh for Binance data (5 minutes)
+            // RSI, MACD, and Open Interest use Binance API with high rate limits
             refreshInterval = setInterval(() => {
                 fetchBitcoinData();
-                fetchBitcoinDominance();
                 fetchOpenInterest();
-            }, intervalTime);
+            }, 5 * 60 * 1000); // 5 minutes
+
+            // Slow refresh for CoinGecko data (30 minutes)
+            // Bitcoin Dominance uses CoinGecko API with low rate limits
+            dominanceInterval = setInterval(() => {
+                fetchBitcoinDominance();
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        // Toggle Quick Start Guide
+        function toggleGuide() {
+            const content = document.getElementById('guideContent');
+            const toggle = document.getElementById('guideToggle');
+
+            content.classList.toggle('expanded');
+            toggle.classList.toggle('expanded');
         }
 
         // Start the dashboard when page loads
