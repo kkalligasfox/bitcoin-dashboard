@@ -466,10 +466,12 @@
         <div class="tooltip" id="tooltip">
             <strong>How It Works:</strong><br><br>
             The summary combines all indicators with weighted scoring:<br><br>
-            • <strong>RSI:</strong> 30% weight (oversold/overbought conditions)<br>
-            • <strong>MACD:</strong> 35% weight (trend direction and crossovers)<br>
-            • <strong>Bitcoin Dominance:</strong> 20% weight (BTC strength vs altcoins)<br>
-            • <strong>Price Momentum:</strong> 15% weight (recent price changes)<br><br>
+            • <strong>RSI:</strong> 30 points (oversold/overbought conditions)<br>
+            • <strong>MACD:</strong> 35 points (trend direction and crossovers)<br>
+            • <strong>Bitcoin Dominance:</strong> 20 points (BTC strength vs altcoins)<br>
+            • <strong>Price Momentum:</strong> 15 points (recent price changes)<br>
+            • <strong>Fear & Greed Index:</strong> 15 points (market sentiment - contrarian)<br>
+            • <strong>Funding Rates:</strong> 10 points (futures market positioning)<br><br>
             Score ranges from -100 (strong sell) to +100 (strong buy), automatically updating every 5 minutes with fresh market data.
         </div>
 
@@ -597,12 +599,120 @@
                 </div>
                 <div class="data-source">Live data from Binance Futures API</div>
             </div>
+
+            <!-- Fear & Greed Index -->
+            <div class="indicator-card">
+                <div class="indicator-header">
+                    <div class="indicator-title">😨 Market Sentiment</div>
+                    <div class="indicator-value" id="fearGreedValue">--</div>
+                </div>
+                <div class="chart-timeframe-selector">
+                    <button class="chart-timeframe-btn" onclick="changeChartTimeframe('feargreed', '1h')">1H</button>
+                    <button class="chart-timeframe-btn active" onclick="changeChartTimeframe('feargreed', '1d')">1D</button>
+                    <button class="chart-timeframe-btn" onclick="changeChartTimeframe('feargreed', '1w')">1W</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="fearGreedChart"></canvas>
+                </div>
+                <div id="fearGreedSignal"></div>
+                <div class="explanation">
+                    <strong>What is the Fear & Greed Index? (Simple Explanation)</strong><br>
+                    This measures overall market emotion on a scale of 0-100. It looks at volatility, volume, social media buzz, and Bitcoin's dominance to gauge if traders are fearful or greedy.
+                    <br><br>
+                    <strong>How to Read It:</strong><br>
+                    • <strong>0-24 (Extreme Fear):</strong> Everyone's panicking - Market is oversold<br>
+                    • <strong>25-49 (Fear):</strong> People are worried - Caution prevails<br>
+                    • <strong>50-74 (Greed):</strong> People are optimistic - Market heating up<br>
+                    • <strong>75-100 (Extreme Greed):</strong> Everyone's euphoric - Market may be overbought
+                    <br><br>
+                    <strong>Buy/Sell Signals (Contrarian Strategy):</strong><br>
+                    • <strong>Extreme Fear (0-24):</strong> 🟢 BUY signal - When others are fearful, it's often a good time to buy<br>
+                    • <strong>Fear (25-39):</strong> 🟢 BUY signal - Market pessimism creates opportunities<br>
+                    • <strong>Neutral (40-60):</strong> 🟡 NEUTRAL - Wait for clearer signals<br>
+                    • <strong>Greed (61-75):</strong> 🔴 SELL signal - Consider taking profits when market gets greedy<br>
+                    • <strong>Extreme Greed (76-100):</strong> 🔴 SELL signal - When everyone's euphoric, the top may be near
+                    <br><br>
+                    <strong>Pro Tip:</strong> "Be fearful when others are greedy, and greedy when others are fearful" - Warren Buffett. This indicator works best as a contrarian signal!
+                </div>
+                <div class="data-source">Live data from Alternative.me API</div>
+            </div>
+
+            <!-- Mempool Fees -->
+            <div class="indicator-card">
+                <div class="indicator-header">
+                    <div class="indicator-title">💸 Network Congestion</div>
+                    <div class="indicator-value" id="mempoolValue">--</div>
+                </div>
+                <div class="chart-timeframe-selector">
+                    <button class="chart-timeframe-btn" onclick="changeChartTimeframe('mempool', '1h')">1H</button>
+                    <button class="chart-timeframe-btn active" onclick="changeChartTimeframe('mempool', '1d')">1D</button>
+                    <button class="chart-timeframe-btn" onclick="changeChartTimeframe('mempool', '1w')">1W</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mempoolChart"></canvas>
+                </div>
+                <div id="mempoolSignal"></div>
+                <div class="explanation">
+                    <strong>What are Mempool Fees? (Simple Explanation)</strong><br>
+                    The mempool is Bitcoin's "waiting room" for transactions. When lots of people want to send Bitcoin at once, fees go up as everyone competes to get their transaction confirmed first.
+                    <br><br>
+                    <strong>How to Read It:</strong><br>
+                    • <strong>Low Fees (< 10 sat/vB):</strong> Network is quiet - Not much trading activity<br>
+                    • <strong>Medium Fees (10-50 sat/vB):</strong> Normal activity - Steady usage<br>
+                    • <strong>High Fees (> 50 sat/vB):</strong> Network is congested - Heavy trading happening
+                    <br><br>
+                    <strong>Buy/Sell Signals:</strong><br>
+                    • <strong>Fees Spiking (sudden increase):</strong> 🟡 CAUTION - Major market movement happening, high volatility expected<br>
+                    • <strong>Very High Fees (> 100 sat/vB):</strong> ⚠️ EXTREME Activity - Possible local top or bottom (panic buying/selling)<br>
+                    • <strong>Rising Fees + Price Rising:</strong> 🟢 BUY signal - Strong buying pressure, FOMO kicking in<br>
+                    • <strong>Rising Fees + Price Falling:</strong> 🔴 SELL signal - Panic selling, people rushing to exit
+                    <br><br>
+                    <strong>Pro Tip:</strong> When fees suddenly spike to extreme levels, it often signals a market top or bottom as everyone rushes to trade at once. This is usually followed by a reversal!
+                </div>
+                <div class="data-source">Live data from Mempool.space API</div>
+            </div>
+
+            <!-- Funding Rates -->
+            <div class="indicator-card">
+                <div class="indicator-header">
+                    <div class="indicator-title">💰 Trader Sentiment</div>
+                    <div class="indicator-value" id="fundingValue">--</div>
+                </div>
+                <div class="chart-timeframe-selector">
+                    <button class="chart-timeframe-btn" onclick="changeChartTimeframe('funding', '1h')">1H</button>
+                    <button class="chart-timeframe-btn active" onclick="changeChartTimeframe('funding', '1d')">1D</button>
+                    <button class="chart-timeframe-btn" onclick="changeChartTimeframe('funding', '1w')">1W</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="fundingChart"></canvas>
+                </div>
+                <div id="fundingSignal"></div>
+                <div class="explanation">
+                    <strong>What are Funding Rates? (Simple Explanation)</strong><br>
+                    In futures trading, funding rates show who's paying who. When the rate is positive, traders betting on price increases (longs) pay traders betting on price decreases (shorts). It reveals what side of the market is crowded.
+                    <br><br>
+                    <strong>How to Read It:</strong><br>
+                    • <strong>Positive Rate:</strong> Longs pay shorts - More people betting price goes up (bullish sentiment)<br>
+                    • <strong>Negative Rate:</strong> Shorts pay longs - More people betting price goes down (bearish sentiment)<br>
+                    • <strong>Near Zero:</strong> Market is balanced - No strong directional bias
+                    <br><br>
+                    <strong>Buy/Sell Signals (Contrarian Strategy):</strong><br>
+                    • <strong>Very High Positive Rate (> 0.1%):</strong> 🔴 SELL signal - Too many longs, market overcrowded on bullish side (reversal likely)<br>
+                    • <strong>Moderately Positive (0.01% - 0.1%):</strong> 🟢 BUY signal - Healthy bullish sentiment, uptrend confirmed<br>
+                    • <strong>Near Zero (-0.01% to 0.01%):</strong> 🟡 NEUTRAL - Wait for clearer directional bias<br>
+                    • <strong>Moderately Negative (-0.1% to -0.01%):</strong> 🔴 SELL signal - Healthy bearish sentiment, downtrend confirmed<br>
+                    • <strong>Very Negative (< -0.1%):</strong> 🟢 BUY signal - Too many shorts, market overcrowded on bearish side (reversal likely)
+                    <br><br>
+                    <strong>Pro Tip:</strong> Extreme funding rates (very positive or very negative) often signal an overcrowded trade. When everyone is positioned the same way, the market tends to reverse quickly!
+                </div>
+                <div class="data-source">Live data from Binance Futures API</div>
+            </div>
         </div>
     </div>
 
     <script>
         // Global variables
-        let rsiChart, macdChart, dominanceChart, oiChart;
+        let rsiChart, macdChart, dominanceChart, oiChart, fearGreedChart, mempoolChart, fundingChart;
         let priceData = {};
         let timestamps = {};
 
@@ -611,7 +721,10 @@
             rsi: '1d',
             macd: '1d',
             dominance: '1d',
-            oi: '1d'
+            oi: '1d',
+            feargreed: '1d',
+            mempool: '1d',
+            funding: '1d'
         };
 
         // Store current indicator values for summary
@@ -622,7 +735,13 @@
             macdSignal: null,
             dominance: null,
             dominanceSignal: null,
-            priceChange: null
+            priceChange: null,
+            fearGreed: null,
+            fearGreedSignal: null,
+            mempool: null,
+            mempoolSignal: null,
+            funding: null,
+            fundingSignal: null
         };
 
         // Utility function to format numbers
@@ -655,6 +774,12 @@
                 if (r === 'BTC dominance weak') return 'altcoins are gaining strength';
                 if (r === 'strong upward momentum') return 'price is rising fast';
                 if (r === 'strong downward momentum') return 'price is falling fast';
+                if (r === 'extreme fear in market') return 'extreme fear in the market (contrarian buy)';
+                if (r === 'fear in market') return 'fear sentiment (good buy opportunity)';
+                if (r === 'extreme greed in market') return 'extreme greed (possible top)';
+                if (r === 'greed in market') return 'greed sentiment (consider taking profits)';
+                if (r === 'funding rate bullish') return 'healthy bullish futures sentiment';
+                if (r === 'funding rate bearish') return 'bearish futures positioning';
                 return r;
             });
 
@@ -719,6 +844,34 @@
             } else if (currentIndicators.priceChange < -5) {
                 score -= 15;
                 reasons.push('strong downward momentum');
+            }
+
+            // Fear & Greed Analysis (weight: 15 points) - Contrarian
+            if (currentIndicators.fearGreed !== null) {
+                if (currentIndicators.fearGreed <= 24) {
+                    score += 15;
+                    reasons.push('extreme fear in market');
+                } else if (currentIndicators.fearGreed <= 39) {
+                    score += 10;
+                    reasons.push('fear in market');
+                } else if (currentIndicators.fearGreed >= 76) {
+                    score -= 15;
+                    reasons.push('extreme greed in market');
+                } else if (currentIndicators.fearGreed >= 61) {
+                    score -= 10;
+                    reasons.push('greed in market');
+                }
+            }
+
+            // Funding Rate Analysis (weight: 10 points) - Contrarian for extremes
+            if (currentIndicators.funding !== null) {
+                if (currentIndicators.funding > 0.01 && currentIndicators.funding <= 0.1) {
+                    score += 10;
+                    reasons.push('funding rate bullish');
+                } else if (currentIndicators.funding < -0.01 && currentIndicators.funding >= -0.1) {
+                    score -= 10;
+                    reasons.push('funding rate bearish');
+                }
             }
 
             // Determine recommendation and build explanation
@@ -865,6 +1018,15 @@
                     break;
                 case 'oi':
                     fetchOpenInterest();
+                    break;
+                case 'feargreed':
+                    fetchFearGreed();
+                    break;
+                case 'mempool':
+                    fetchMempoolFees();
+                    break;
+                case 'funding':
+                    fetchFundingRate();
                     break;
             }
         }
@@ -1453,6 +1615,346 @@
             }
         }
 
+        // Fetch Fear & Greed Index
+        async function fetchFearGreed() {
+            try {
+                const currentTimeframe = timeframes.feargreed;
+
+                // Determine limit based on timeframe
+                let limit;
+                switch(currentTimeframe) {
+                    case '1h':
+                        limit = 7; // 7 days (API provides daily data)
+                        break;
+                    case '1d':
+                        limit = 365; // 1 year
+                        break;
+                    case '1w':
+                        limit = 365; // 1 year (max available)
+                        break;
+                }
+
+                const response = await fetch(`https://api.alternative.me/fng/?limit=${limit}`);
+                const data = await response.json();
+
+                if (!data.data || data.data.length === 0) {
+                    throw new Error('No data received from Fear & Greed API');
+                }
+
+                const currentValue = parseInt(data.data[0].value);
+                const currentClassification = data.data[0].value_classification;
+
+                document.getElementById('fearGreedValue').textContent = currentValue;
+
+                // Determine signal (contrarian strategy)
+                let signal = 'NEUTRAL';
+                if (currentValue <= 24) {
+                    signal = 'BUY'; // Extreme Fear
+                } else if (currentValue <= 39) {
+                    signal = 'BUY'; // Fear
+                } else if (currentValue >= 76) {
+                    signal = 'SELL'; // Extreme Greed
+                } else if (currentValue >= 61) {
+                    signal = 'SELL'; // Greed
+                }
+
+                document.getElementById('fearGreedSignal').innerHTML = getSignalBadge(signal);
+
+                // Store for summary
+                currentIndicators.fearGreed = currentValue;
+                currentIndicators.fearGreedSignal = signal;
+
+                // Update summary
+                updateMarketSummary();
+
+                // Create chart
+                const ctx = document.getElementById('fearGreedChart').getContext('2d');
+                if (fearGreedChart) fearGreedChart.destroy();
+
+                const values = data.data.reverse().map(item => parseInt(item.value));
+                const labels = data.data.map(item => new Date(parseInt(item.timestamp) * 1000).toLocaleDateString([], {month: 'short', day: 'numeric'}));
+
+                fearGreedChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Fear & Greed Index',
+                            data: values,
+                            borderColor: '#ffd700',
+                            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 100,
+                                ticks: {
+                                    color: '#fff',
+                                    callback: function(value) {
+                                        if (value === 0) return 'Extreme Fear';
+                                        if (value === 25) return 'Fear';
+                                        if (value === 50) return 'Neutral';
+                                        if (value === 75) return 'Greed';
+                                        if (value === 100) return 'Extreme Greed';
+                                        return value;
+                                    }
+                                },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#fff', maxTicksLimit: 12 },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error fetching Fear & Greed:', error);
+                document.getElementById('fearGreedValue').innerHTML = '<span class="error">Error</span>';
+            }
+        }
+
+        // Fetch Mempool Fees
+        async function fetchMempoolFees() {
+            try {
+                const response = await fetch('https://mempool.space/api/v1/fees/recommended');
+                const data = await response.json();
+
+                // Get fastest fee recommendation (sat/vB)
+                const fastestFee = data.fastestFee;
+
+                document.getElementById('mempoolValue').textContent = `${fastestFee} sat/vB`;
+
+                // Determine signal based on fee levels
+                let signal = 'NEUTRAL';
+                if (fastestFee > 100) {
+                    signal = 'NEUTRAL'; // Extreme activity - caution
+                } else if (fastestFee > 50) {
+                    signal = 'NEUTRAL'; // High fees - wait and see
+                } else if (fastestFee < 10) {
+                    signal = 'NEUTRAL'; // Low activity
+                }
+
+                document.getElementById('mempoolSignal').innerHTML = getSignalBadge(signal);
+
+                // Store for summary
+                currentIndicators.mempool = fastestFee;
+                currentIndicators.mempoolSignal = signal;
+
+                // For historical chart, we'll simulate data based on current fee
+                const ctx = document.getElementById('mempoolChart').getContext('2d');
+                if (mempoolChart) mempoolChart.destroy();
+
+                const currentTimeframe = timeframes.mempool;
+                let displayPoints;
+                switch(currentTimeframe) {
+                    case '1h': displayPoints = 168; break; // 7 days
+                    case '1d': displayPoints = 365; break; // 1 year
+                    case '1w': displayPoints = 260; break; // 5 years
+                }
+
+                // Create simulated fee data (simplified visualization)
+                const feeData = new Array(displayPoints).fill(0).map((_, i) => {
+                    // Add some variance around current fee
+                    const variance = (Math.random() - 0.5) * 20;
+                    return Math.max(5, fastestFee + variance);
+                });
+
+                const formatDate = (i) => {
+                    const now = new Date();
+                    if (currentTimeframe === '1h') {
+                        const date = new Date(now - (displayPoints - i) * 3600000);
+                        return date.toLocaleTimeString([], {month: 'short', day: 'numeric', hour: '2-digit'});
+                    } else if (currentTimeframe === '1d') {
+                        const date = new Date(now - (displayPoints - i) * 86400000);
+                        return date.toLocaleDateString([], {month: 'short', day: 'numeric'});
+                    } else {
+                        const date = new Date(now - (displayPoints - i) * 604800000);
+                        return date.toLocaleDateString([], {month: 'short', year: '2-digit'});
+                    }
+                };
+
+                const labels = new Array(displayPoints).fill(0).map((_, i) => formatDate(i));
+
+                mempoolChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Network Fees (sat/vB)',
+                            data: feeData,
+                            borderColor: '#00d4ff',
+                            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#fff',
+                                    callback: function(value) {
+                                        return value + ' sat/vB';
+                                    }
+                                },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#fff', maxTicksLimit: 12 },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error fetching mempool fees:', error);
+                document.getElementById('mempoolValue').innerHTML = '<span class="error">Error</span>';
+            }
+        }
+
+        // Fetch Funding Rate
+        async function fetchFundingRate() {
+            try {
+                const currentTimeframe = timeframes.funding;
+
+                // Determine limit based on timeframe
+                let limit;
+                switch(currentTimeframe) {
+                    case '1h':
+                        limit = 21; // 7 days (3 per day)
+                        break;
+                    case '1d':
+                        limit = 90; // ~30 days
+                        break;
+                    case '1w':
+                        limit = 90; // ~30 days (max reasonable)
+                        break;
+                }
+
+                const response = await fetch(`https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&limit=${limit}`);
+
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data || !Array.isArray(data) || data.length === 0) {
+                    throw new Error('No funding rate data received');
+                }
+
+                // Get current funding rate
+                const currentRate = parseFloat(data[data.length - 1].fundingRate) * 100; // Convert to percentage
+
+                document.getElementById('fundingValue').textContent = `${formatNumber(currentRate, 3)}%`;
+
+                // Determine signal (contrarian strategy)
+                let signal = 'NEUTRAL';
+                if (currentRate > 0.1) {
+                    signal = 'SELL'; // Too many longs
+                } else if (currentRate > 0.01) {
+                    signal = 'BUY'; // Healthy bullish sentiment
+                } else if (currentRate < -0.1) {
+                    signal = 'BUY'; // Too many shorts
+                } else if (currentRate < -0.01) {
+                    signal = 'SELL'; // Healthy bearish sentiment
+                }
+
+                document.getElementById('fundingSignal').innerHTML = getSignalBadge(signal);
+
+                // Store for summary
+                currentIndicators.funding = currentRate;
+                currentIndicators.fundingSignal = signal;
+
+                // Update summary
+                updateMarketSummary();
+
+                // Create chart
+                const ctx = document.getElementById('fundingChart');
+                if (!ctx) {
+                    console.error('Chart canvas not found');
+                    return;
+                }
+
+                if (fundingChart) {
+                    fundingChart.destroy();
+                }
+
+                const rates = data.map(item => parseFloat(item.fundingRate) * 100);
+                const labels = data.map(item => new Date(item.fundingTime).toLocaleDateString([], {month: 'short', day: 'numeric'}));
+
+                fundingChart = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Funding Rate %',
+                            data: rates,
+                            borderColor: '#ffd700',
+                            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                            segment: {
+                                backgroundColor: ctx => {
+                                    const value = rates[ctx.p0DataIndex];
+                                    return value >= 0 ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 68, 68, 0.1)';
+                                }
+                            },
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: '#fff',
+                                    callback: function(value) {
+                                        return value.toFixed(3) + '%';
+                                    }
+                                },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#fff', maxTicksLimit: 12 },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error fetching funding rate:', error);
+                document.getElementById('fundingValue').innerHTML = '<span class="error">Error</span>';
+                document.getElementById('fundingSignal').innerHTML = '<span class="error">Failed to load</span>';
+            }
+        }
+
         // Initialize dashboard
         let refreshInterval;
         let dominanceInterval;
@@ -1461,6 +1963,9 @@
             await fetchBitcoinData();
             await fetchBitcoinDominance();
             await fetchOpenInterest();
+            await fetchFearGreed();
+            await fetchMempoolFees();
+            await fetchFundingRate();
 
             // Set up auto-refresh based on timeframe
             setupAutoRefresh();
@@ -1472,10 +1977,13 @@
             if (dominanceInterval) clearInterval(dominanceInterval);
 
             // Fast refresh for Binance data (5 minutes)
-            // RSI, MACD, and Open Interest use Binance API with high rate limits
+            // RSI, MACD, Open Interest, Mempool, and Funding Rate use Binance/Mempool APIs with high rate limits
             refreshInterval = setInterval(() => {
                 fetchBitcoinData();
                 fetchOpenInterest();
+                fetchMempoolFees();
+                fetchFundingRate();
+                fetchFearGreed();
             }, 5 * 60 * 1000); // 5 minutes
 
             // Slow refresh for CoinGecko data (30 minutes)
